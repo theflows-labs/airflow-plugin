@@ -12,6 +12,6 @@ apache-airflow==2.10.5
 apache-airflow-providers-amazon==8.18.0
 
 # Development
-black==24.2.0
+black==24.3.0
 flake8==7.0.0
 pytest==8.0.2
