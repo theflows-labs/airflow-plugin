@@ -32,13 +32,13 @@ Example Usage:
 For detailed parameter documentation, see the individual operator factory classes.
 """
 
-from .operators.s3_operations import (
+from airflow_plugin.plugins.aws.s3.operators.s3_operations import (
     S3CopyObjectOperatorFactory,
     S3DeleteObjectsOperatorFactory,
     S3PutObjectOperatorFactory,
     S3ListOperatorFactory
 )
-from .hooks.s3_hook import S3Hook
+from airflow_plugin.plugins.aws.s3.hooks.s3_hook import S3Hook
 
 # Export operators and hooks
 __all__ = [

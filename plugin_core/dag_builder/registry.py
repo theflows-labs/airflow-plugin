@@ -9,7 +9,7 @@ import inspect
 import os
 import sys
 
-from .base import OperatorFactory
+from airflow_plugin.plugin_core.dag_builder.base import OperatorFactory
 
 logger = logging.getLogger(__name__)
 

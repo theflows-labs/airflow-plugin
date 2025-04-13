@@ -10,9 +10,9 @@ import inspect
 from airflow import DAG
 from airflow.models import BaseOperator
 
-from ..metadata import DAGConfigurationRepository
-from .base import DAGBuilder
-from .registry import OperatorRegistry
+from airflow_plugin.plugin_core.metadata import DAGConfigurationRepository
+from airflow_plugin.plugin_core.dag_builder.base import DAGBuilder
+from airflow_plugin.plugin_core.dag_builder.registry import OperatorRegistry
 
 logger = logging.getLogger(__name__)
 

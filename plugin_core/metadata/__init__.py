@@ -1,5 +1,5 @@
-from .repository import DAGConfigurationRepository, TaskConfigurationRepository, TaskDependencyRepository
-from .models import DAGConfiguration, TaskConfiguration, TaskDependency
+from airflow_plugin.plugin_core.metadata.repository import DAGConfigurationRepository, TaskConfigurationRepository, TaskDependencyRepository
+from airflow_plugin.plugin_core.metadata.models import DAGConfiguration, TaskConfiguration, TaskDependency
 
 __all__ = [
     'DAGConfigurationRepository',

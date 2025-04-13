@@ -11,7 +11,7 @@ import logging
 from typing import Dict, Any
 from pathlib import Path
 
-from plugin_core.dag_builder.registry import OperatorRegistry
+from airflow_plugin.plugin_core.dag_builder.registry import OperatorRegistry
 
 logger = logging.getLogger(__name__)
 

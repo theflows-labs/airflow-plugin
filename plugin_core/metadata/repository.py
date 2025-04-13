@@ -1,6 +1,6 @@
 from typing import List, Optional, Dict, Any
 from sqlalchemy.orm import Session
-from .models import DAGConfiguration, TaskConfiguration, TaskDependency
+from airflow_plugin.plugin_core.metadata.models import DAGConfiguration, TaskConfiguration, TaskDependency
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
