@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import axios from 'axios';
 import YAML from 'yaml';
 
-const useDAGStore = create((set) => ({
+export const useDAGStore = create((set) => ({
   dags: [],
   loading: false,
   error: null,
@@ -86,6 +86,4 @@ const useDAGStore = create((set) => ({
       set({ error: error.message, loading: false });
     }
   },
-}));
-
-export default useDAGStore; 
+})); 
