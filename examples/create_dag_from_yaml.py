@@ -3,8 +3,8 @@ Example script demonstrating how to create a DAG from YAML configuration.
 """
 import os
 from pathlib import Path
-from plugin_core.dag_builder.registry import OperatorRegistry
-from plugin_core.dag_builder.yaml_builder import YAMLDAGBuilder
+from flows.plugin_core.dag_builder.registry import OperatorRegistry
+from flows.plugin_core.dag_builder.yaml_builder import YAMLDAGBuilder
 
 # Get the path to the example YAML configuration
 config_path = Path(__file__).parent / "dag_config.yaml"
@@ -18,7 +18,7 @@ def create_dag():
     )
     
     # Build the DAG
-    OperatorRegistry.register_factories()
+    #OperatorRegistry.register_factories()
     dag = builder.build()
     
     if dag:

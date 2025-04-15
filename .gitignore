@@ -1,9 +1,47 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Testing
+coverage/
+
+# Production
+build/
+dist/
+out/
+
+# Misc
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor directories and files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+env/
 build/
 develop-eggs/
 dist/
@@ -15,7 +53,6 @@ lib64/
 parts/
 sdist/
 var/
-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -23,50 +60,44 @@ wheels/
 # Virtual Environment
 venv/
 ENV/
-.env
-.venv
-env/
-env.bak/
-venv.bak/
+
+# Database
+*.db
+*.sqlite3
 
 # IDE
 .idea/
 .vscode/
 *.swp
 *.swo
-*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
 # Project specific
-airflow_plugin/plugins/*/__pycache__/
-airflow_plugin/plugins/*/*.pyc
-airflow_plugin/plugins/*/*.pyo
-airflow_plugin/plugins/*/*.pyd
-airflow_plugin/plugins/*/.Python
-airflow_plugin/plugins/*/build/
-airflow_plugin/plugins/*/develop-eggs/
-airflow_plugin/plugins/*/dist/
-airflow_plugin/plugins/*/downloads/
-airflow_plugin/plugins/*/eggs/
-airflow_plugin/plugins/*/.eggs/
-airflow_plugin/plugins/*/lib/
-airflow_plugin/plugins/*/lib64/
-airflow_plugin/plugins/*/parts/
-airflow_plugin/plugins/*/sdist/
-airflow_plugin/plugins/*/var/
-airflow_plugin/plugins/*/wheels/
-airflow_plugin/plugins/*/*.egg-info/
-airflow_plugin/plugins/*/.installed.cfg
-airflow_plugin/plugins/*/*.egg
-
-# Logs
-*.log
-logs/
-log/
-
-# Database
-*.sqlite3
-*.db
-
-# OS specific
-.DS_Store
-Thumbs.db 
+flows/plugins/*/__pycache__/
+flows/plugins/*/*.pyc
+flows/plugins/*/*.pyo
+flows/plugins/*/*.pyd
+flows/plugins/*/.Python
+flows/plugins/*/build/
+flows/plugins/*/develop-eggs/
+flows/plugins/*/dist/
+flows/plugins/*/downloads/
+flows/plugins/*/eggs/
+flows/plugins/*/.eggs/
+flows/plugins/*/lib/
+flows/plugins/*/lib64/
+flows/plugins/*/parts/
+flows/plugins/*/sdist/
+flows/plugins/*/var/
+flows/plugins/*/wheels/
+flows/plugins/*/*.egg-info/
+flows/plugins/*/.installed.cfg
+flows/plugins/*/*.egg 
