@@ -11,8 +11,8 @@ from airflow import DAG
 from airflow.models import BaseOperator
 from airflow.utils.dates import days_ago
 
-from airflow_plugin.plugin_core.metadata import DAGConfigurationRepository, TaskConfigurationRepository, TaskDependencyRepository
-from airflow_plugin.plugin_core.metadata.models import DAGConfiguration, TaskConfiguration, TaskDependency
+from plugin_core.metadata import DAGConfigurationRepository, TaskConfigurationRepository, TaskDependencyRepository
+from plugin_core.metadata.models import DAGConfiguration, TaskConfiguration, TaskDependency
 
 logger = logging.getLogger(__name__)
 

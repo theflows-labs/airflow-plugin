@@ -28,8 +28,8 @@ Example Usage:
 For detailed parameter documentation, see the individual operator factory classes.
 """
 
-from airflow_plugin.plugins.aws.athena.operators.athena_query import AthenaQueryOperatorFactory
-from airflow_plugin.plugins.aws.athena.hooks.athena_hook import AthenaHook
+from plugins.aws.athena.operators.athena_query import AthenaQueryOperatorFactory
+from plugins.aws.athena.hooks.athena_hook import AthenaHook
 
 # Export operators and hooks
 __all__ = [

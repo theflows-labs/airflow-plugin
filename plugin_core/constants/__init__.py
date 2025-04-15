@@ -1,7 +1,7 @@
 """
 Constants package for theflows.
 """
-from airflow_plugin.plugin_core.constants.database import ( 
+from plugin_core.constants.database import ( 
     DB_USER,
     DB_PASSWORD,
     DB_HOST,
