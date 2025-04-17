@@ -2,9 +2,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import Layout from './components/Layout';
-import Dashboard from './pages/Dashboard';
 import DAGBuilder from './pages/DAGBuilder';
-import DAGList from './pages/DAGList';
+import DAGsList from './pages/DAGsList';
 
 // Create a theme instance
 const theme = createTheme({
@@ -26,10 +25,10 @@ function App() {
       <Router>
         <Layout>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/dags" element={<DAGList />} />
+            <Route path="/" element={<DAGsList />} />
+            <Route path="/dags" element={<DAGsList />} />
             <Route path="/dags/new" element={<DAGBuilder />} />
-            <Route path="/dags/:id" element={<DAGBuilder />} />
+            <Route path="/dags/:id/edit" element={<DAGBuilder />} />
           </Routes>
         </Layout>
       </Router>

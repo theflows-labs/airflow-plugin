@@ -1,89 +1,113 @@
 import { create } from 'zustand';
 import axios from 'axios';
 import YAML from 'yaml';
+import { saveFileLocally } from '../utils/fileUtils';
 
-export const useDAGStore = create((set) => ({
+const useDAGStore = create((set) => ({
   dags: [],
+  selectedDAG: null,
   loading: false,
   error: null,
 
-  // Fetch all DAGs
   fetchDAGs: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.get('/api/dags');
-      set({ dags: response.data, loading: false });
+      const response = await fetch('/api/dags');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      set({ dags: data, loading: false });
     } catch (error) {
+      console.error('Error fetching DAGs:', error);
       set({ error: error.message, loading: false });
     }
   },
 
-  // Save a DAG
   saveDAG: async (dagData) => {
     set({ loading: true, error: null });
     try {
-      // Save to database
-      await axios.post('/api/dags', dagData);
-
-      // Save to YAML file
-      const yamlContent = YAML.stringify({
-        dags: {
-          [dagData.name]: {
-            description: dagData.description,
-            is_active: true,
-            config: {
-              schedule_interval: dagData.schedule,
-              start_date: dagData.startDate,
-              catchup: false,
-              max_active_runs: 1,
-              default_args: {
-                owner: 'airflow',
-                retries: 1,
-                retry_delay: '00:05:00',
-              },
-            },
-            tasks: dagData.nodes.reduce((acc, node) => {
-              acc[node.id] = {
-                type: node.type,
-                is_active: true,
-                config: node.data.config,
-              };
-              return acc;
-            }, {}),
-            dependencies: dagData.edges.map(edge => ({
-              task_id: edge.target,
-              depends_on_task_id: edge.source,
-              type: edge.type || 'success',
-              is_active: true,
-            })),
-          },
+      const response = await fetch('/api/dags', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify(dagData),
       });
 
-      // Save YAML file
-      await axios.post('/api/dags/yaml', {
-        name: dagData.name,
-        content: yamlContent,
-      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
 
-      set({ loading: false });
+      const savedDAG = await response.json();
+      set((state) => ({
+        dags: [...state.dags, savedDAG],
+        loading: false,
+      }));
+      return savedDAG;
     } catch (error) {
+      console.error('Error saving DAG:', error);
       set({ error: error.message, loading: false });
       throw error;
     }
   },
 
-  // Delete a DAG
-  deleteDAG: async (id) => {
+  updateDAG: async (dagId, dagData) => {
     set({ loading: true, error: null });
     try {
-      await axios.delete(`/api/dags/${id}`);
+      const response = await fetch(`/api/dags/${dagId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dagData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      const updatedDAG = await response.json();
       set((state) => ({
-        dags: state.dags.filter((dag) => dag.id !== id),
+        dags: state.dags.map((dag) =>
+          dag.id === dagId ? updatedDAG : dag
+        ),
+        loading: false,
+      }));
+      return updatedDAG;
+    } catch (error) {
+      console.error('Error updating DAG:', error);
+      set({ error: error.message, loading: false });
+      throw error;
+    }
+  },
+
+  deleteDAG: async (dagId) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await fetch(`/api/dags/${dagId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      set((state) => ({
+        dags: state.dags.filter((dag) => dag.id !== dagId),
         loading: false,
       }));
     } catch (error) {
+      console.error('Error deleting DAG:', error);
       set({ error: error.message, loading: false });
+      throw error;
     }
   },
-})); 
+
+  setSelectedDAG: (dag) => set({ selectedDAG: dag }),
+}));
+
+export default useDAGStore; 

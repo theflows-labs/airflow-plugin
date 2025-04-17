@@ -7,6 +7,7 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   addEdge,
+  Panel
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import {
@@ -23,6 +24,8 @@ import {
   IconButton,
   Tooltip,
   Divider,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import AddIcon from '@mui/icons-material/Add';
@@ -30,9 +33,10 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import CodeIcon from '@mui/icons-material/Code';
 import StorageIcon from '@mui/icons-material/Storage';
 import DataObjectIcon from '@mui/icons-material/DataObject';
+import DownloadIcon from '@mui/icons-material/Download';
 import TaskNode from '../components/TaskNode';
 import TaskConfigForm from '../components/TaskConfigForm';
-import { useDAGStore } from '../stores/dagStore';
+import useDAGStore from '../stores/dagStore';
 
 const nodeTypes = {
   task: TaskNode,
@@ -54,6 +58,7 @@ function DAGBuilder() {
   const [selectedNode, setSelectedNode] = useState(null);
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isDAGConfigOpen, setIsDAGConfigOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [dagConfig, setDagConfig] = useState({
     name: '',
     description: '',
@@ -72,26 +77,60 @@ function DAGBuilder() {
   }, []);
 
   const handleSave = async () => {
-    const dagData = {
-      ...dagConfig,
-      nodes: nodes.map(node => ({
-        id: node.id,
-        type: node.data.type,
-        position: node.position,
-        data: node.data,
-      })),
-      edges: edges.map(edge => ({
-        source: edge.source,
-        target: edge.target,
-        type: edge.type || 'success',
-      })),
-    };
-
     try {
-      await saveDAG(dagData);
-      navigate('/dags');
+      if (!dagConfig.name) {
+        setSnackbar({ open: true, message: 'Please provide a DAG name', severity: 'error' });
+        return;
+      }
+
+      const dagData = {
+        ...dagConfig,
+        nodes: nodes.map(node => ({
+          id: node.id,
+          data: node.data,
+          position: node.position
+        })),
+        edges: edges.map(edge => ({
+          source: edge.source,
+          target: edge.target
+        }))
+      };
+
+      const savedDAG = await saveDAG(dagData);
+      setSnackbar({ open: true, message: 'DAG saved successfully', severity: 'success' });
+      navigate(`/dags/${savedDAG.id}`);
     } catch (error) {
       console.error('Error saving DAG:', error);
+      setSnackbar({ open: true, message: error.message || 'Failed to save DAG', severity: 'error' });
+    }
+  };
+
+  const handleDownloadYAML = async () => {
+    if (!selectedNode) {
+      setSnackbar({ open: true, message: 'Please select a node first', severity: 'error' });
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/dags/${selectedNode.id}/yaml`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `dag_${selectedNode.id}.yaml`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      setSnackbar({ open: true, message: 'YAML downloaded successfully', severity: 'success' });
+    } catch (error) {
+      console.error('Error downloading YAML:', error);
+      setSnackbar({ open: true, message: error.message || 'Failed to download YAML', severity: 'error' });
     }
   };
 
@@ -165,6 +204,24 @@ function DAGBuilder() {
               <Background />
               <Controls />
               <MiniMap />
+              <Panel position="top-right">
+                <Button
+                  variant="contained"
+                  startIcon={<SaveIcon />}
+                  onClick={handleSave}
+                  sx={{ mr: 1 }}
+                >
+                  Save DAG
+                </Button>
+                <Button
+                  variant="outlined"
+                  startIcon={<DownloadIcon />}
+                  onClick={handleDownloadYAML}
+                  disabled={!selectedNode}
+                >
+                  Download YAML
+                </Button>
+              </Panel>
             </ReactFlow>
           </Paper>
         </Grid>
@@ -243,6 +300,20 @@ function DAGBuilder() {
           <Button onClick={() => setIsDAGConfigOpen(false)}>Close</Button>
         </DialogActions>
       </Dialog>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
