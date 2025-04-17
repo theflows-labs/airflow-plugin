@@ -106,13 +106,30 @@ function DAGBuilder() {
   };
 
   const handleDownloadYAML = async () => {
-    if (!selectedNode) {
-      setSnackbar({ open: true, message: 'Please select a node first', severity: 'error' });
-      return;
-    }
-
     try {
-      const response = await fetch(`/api/dags/${selectedNode.id}/yaml`);
+      if (!dagConfig.name) {
+        setSnackbar({ open: true, message: 'Please provide a DAG name first', severity: 'error' });
+        return;
+      }
+
+      // First save the DAG to get its ID
+      const dagData = {
+        ...dagConfig,
+        nodes: nodes.map(node => ({
+          id: node.id,
+          data: node.data,
+          position: node.position
+        })),
+        edges: edges.map(edge => ({
+          source: edge.source,
+          target: edge.target
+        }))
+      };
+
+      const savedDAG = await saveDAG(dagData);
+      
+      // Then download the YAML
+      const response = await fetch(`/api/dags/${savedDAG.id}/yaml`);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
@@ -122,7 +139,7 @@ function DAGBuilder() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `dag_${selectedNode.id}.yaml`;
+      a.download = `dag_${savedDAG.id}.yaml`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -205,14 +222,6 @@ function DAGBuilder() {
               <Controls />
               <MiniMap />
               <Panel position="top-right">
-                <Button
-                  variant="contained"
-                  startIcon={<SaveIcon />}
-                  onClick={handleSave}
-                  sx={{ mr: 1 }}
-                >
-                  Save DAG
-                </Button>
                 <Button
                   variant="outlined"
                   startIcon={<DownloadIcon />}
